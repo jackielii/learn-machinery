@@ -23,10 +23,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// tasks := map[string]interface{}{
-	//     "task": task,
-	// }
-	// server.RegisterTasks(tasks)
 	server.RegisterTask("task", task)
 
 	worker := server.NewWorker("worker1", 10)
@@ -45,6 +41,9 @@ func main() {
 				Value: "hello please",
 			},
 		},
+		Headers: map[string]interface{}{
+			"foo": "bar",
+		},
 	}
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
@@ -54,10 +53,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	spew.Dump("state before ", asyncResult.GetState())
+	// spew.Dump("state before ", asyncResult.GetState())
 	// rs, err := asyncResult.Get(10 * time.Millisecond)
 	rs, err := asyncResult.GetWithTimeout(1000*time.Millisecond, 10*time.Millisecond)
-	spew.Dump("state after ", asyncResult.GetState())
+	// spew.Dump("state after ", asyncResult.GetState())
 
 	for _, r := range rs {
 		spew.Dump("results", r)
@@ -72,7 +71,10 @@ func main() {
 }
 
 func task(ctx context.Context, msg string) (string, error) {
+	fmt.Println("===================================================")
+	spew.Dump(ctx)
 	fmt.Println("received ", msg)
+	fmt.Println("===================================================")
 
 	return "returning from task", nil
 }
