@@ -42,7 +42,9 @@ func main() {
 			},
 		},
 		Headers: map[string]interface{}{
-			"foo": "bar",
+			"foo":    "bar",
+			"map":    map[string]string{"cool": "nested header"},
+			"struct": struct{ Foo string }{Foo: "foo struct"},
 		},
 	}
 	ctx := context.Background()
@@ -58,10 +60,10 @@ func main() {
 	rs, err := asyncResult.GetWithTimeout(1000*time.Millisecond, 10*time.Millisecond)
 	// spew.Dump("state after ", asyncResult.GetState())
 
-	for _, r := range rs {
-		spew.Dump("results", r)
+	for i, r := range rs {
+		fmt.Printf("result %d: %v", i, r)
 	}
-	spew.Dump("results: ", tasks.HumanReadableResults(rs))
+	fmt.Println("results: ", tasks.HumanReadableResults(rs))
 
 	worker.Quit()
 	err = <-errCh
